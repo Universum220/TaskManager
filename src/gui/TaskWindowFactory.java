@@ -5,6 +5,7 @@ import model.Task;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 
 public class TaskWindowFactory extends WindowFactory {
@@ -39,9 +40,17 @@ public class TaskWindowFactory extends WindowFactory {
 
     @Override
     protected JPanel createToolbarPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        return panel;
+        JPanel toolbarPanel = super.createToolbarPanel();
+        addButton(toolbarPanel,
+                new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ConfigWindowFactory configWindowFactory = new ConfigWindowFactory();
+                        configWindowFactory.createFrame();
+                    }
+                },
+                "C");
+        return toolbarPanel;
     }
 
     private JComboBox<DefaultGradation> addEditLine(String label) {

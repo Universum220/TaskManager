@@ -29,8 +29,20 @@ public abstract class WindowFactory {
 
     abstract JComponent createEditorPanel();
 
-    abstract JPanel createToolbarPanel();
+    protected JPanel createToolbarPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        return panel;
+    }
 
+
+    protected void addButton(JPanel panel, Action actionAdd, String text) {
+        JButton buttonAdd = new JButton(actionAdd);
+        buttonAdd.setSize(new Dimension(24, 24));
+        buttonAdd.setPreferredSize(new Dimension(24, 24));
+        buttonAdd.setText(text);
+        panel.add(buttonAdd);
+    }
 
     public void update() {
         updateModel();

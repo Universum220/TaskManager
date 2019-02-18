@@ -60,8 +60,7 @@ public class MainWindowFactory extends WindowFactory {
 
     @Override
     protected JPanel createToolbarPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        JPanel panel = super.createToolbarPanel();
 
         // button add
         Action actionAdd = new AbstractAction() {
@@ -98,14 +97,6 @@ public class MainWindowFactory extends WindowFactory {
         addButton(panel, actionChooseFile, "F");
 
         return panel;
-    }
-
-    private void addButton(JPanel panel, Action actionAdd, String text) {
-        JButton buttonAdd = new JButton(actionAdd);
-        buttonAdd.setSize(new Dimension(24, 24));
-        buttonAdd.setPreferredSize(new Dimension(24, 24));
-        buttonAdd.setText(text);
-        panel.add(buttonAdd);
     }
 
     @Override
