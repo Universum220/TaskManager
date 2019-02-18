@@ -9,6 +9,7 @@ public class Task implements Serializable {
     private String name = "";
     private int value = 0;
     private Resource resource = null;
+    private Config config;
 
     public String getName() {
         return name;
