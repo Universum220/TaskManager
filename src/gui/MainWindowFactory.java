@@ -1,7 +1,8 @@
 package gui;
 
-import model.Day;
-import model.Task;
+import model.TaskList;
+import model.Task.Task;
+import resource.Icons;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -16,13 +17,11 @@ import java.util.Vector;
 
 public class MainWindowFactory extends WindowFactory {
 
-    private Day day = new Day();
+    private TaskList taskList = new TaskList();
     private DefaultTableModel tableModel = new DefaultTableModel();
     private JTable table;
     private String filePath = "save.out";
-    private JFrame frame;
 
-    @Override
     public void createFrame() {
         load();
         super.createFrame();
@@ -36,7 +35,6 @@ public class MainWindowFactory extends WindowFactory {
         table.setModel(tableModel);
         tableModel.addColumn("Name");
         tableModel.addColumn("Value");
-        tableModel.addColumn("model.Resource");
 
         table.getModel().addTableModelListener(new TableModelListener() {
             @Override
@@ -46,7 +44,7 @@ public class MainWindowFactory extends WindowFactory {
             }
         });
 
-        table.setDefaultRenderer(day.getClass(), new DefaultTableCellRenderer() {
+        table.setDefaultRenderer(taskList.getClass(), new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -66,23 +64,33 @@ public class MainWindowFactory extends WindowFactory {
         Action actionAdd = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                day.addEvent(new Task());
-                update();
+                Task task = new Task("Default");
+                editTask(task);
             }
         };
-        addButton(panel, actionAdd, "+");
+        addButton(panel, actionAdd, Icons.ADD);
 
         // button remove
         Action actonRemove = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                day.removeEvent(table.getSelectedRow());
+                taskList.getTasks().remove(table.getSelectedRow());
                 update();
             }
         };
-        addButton(panel, actonRemove, "-");
+        addButton(panel, actonRemove, Icons.DELETE);
 
-        // button remove
+        // button edit
+        Action actionEdit = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Task task = taskList.getTasks().get(table.getSelectedRow());
+                editTask(task);
+            }
+        };
+        addButton(panel, actionEdit, Icons.EDIT);
+
+        // config save file
         Action actionChooseFile = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -94,9 +102,16 @@ public class MainWindowFactory extends WindowFactory {
                 }
             }
         };
-        addButton(panel, actionChooseFile, "F");
+        addButton(panel, actionChooseFile, Icons.SETTING);
 
         return panel;
+    }
+
+    private void editTask(Task task) {
+        TaskWindowFactory windowFactory = new TaskWindowFactory();
+        windowFactory.createFrame(task);
+        taskList.getTasks().add(task);
+        update();
     }
 
     @Override
@@ -114,12 +129,11 @@ public class MainWindowFactory extends WindowFactory {
     public void updateModel() {
         tableModel.setRowCount(0);
 
-        ArrayList<Task> events = day.getEvents();
+        ArrayList<Task> events = taskList.getTasks();
         for (Task event : events) {
             Vector<Object> rowData = new Vector<>();
             rowData.add(event.getName());
             rowData.add(event.getValue());
-            rowData.add(event.getResource());
             tableModel.addRow(rowData);
         }
     }
@@ -128,20 +142,7 @@ public class MainWindowFactory extends WindowFactory {
         try {
             FileOutputStream fos = new FileOutputStream(filePath);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-            for (Task event : day.getEvents()) {
-                Vector vector = tableModel.getDataVector().get(0);
-
-                String name = (String) vector.get(0);
-                event.setName(name);
-
-                Integer value = vector.get(1) instanceof String
-                        ? Integer.valueOf(((String) vector.get(1)))
-                        : (Integer) vector.get(1);
-                event.setValue(value);
-            }
-
-            oos.writeObject(day);
+            oos.writeObject(taskList);
             oos.flush();
             oos.close();
         } catch (IOException e) {
@@ -159,7 +160,7 @@ public class MainWindowFactory extends WindowFactory {
 
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(fis);
-            day = (Day) oin.readObject();
+            taskList = (TaskList) oin.readObject();
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error load file");
             e.printStackTrace();

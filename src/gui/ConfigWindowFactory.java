@@ -1,12 +1,10 @@
 package gui;
 
-import model.Config;
-import model.DefaultGradation;
-import model.Task;
+import model.Task.Config;
+import model.Task.Task;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 
 public class ConfigWindowFactory extends WindowFactory {
@@ -14,8 +12,7 @@ public class ConfigWindowFactory extends WindowFactory {
     private Config config;
     private JPanel panel;
 
-    @Override
-    public void createFrame() {
+    public void createFrame(Task task) {
         config = new Config();
         super.createFrame();
     }

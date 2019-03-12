@@ -1,22 +1,24 @@
 package model;
 
 public class Resource {
-    private float physical;
-    private float intelligence;
 
-    public float getPhysical() {
+    private Double physical;
+    private Double intelligence;
+
+
+    public Double getPhysical() {
         return physical;
     }
 
-    public void setPhysical(float physical) {
+    public void setPhysical(Double physical) {
         this.physical = physical;
     }
 
-    public float getIntelligence() {
+    public Double getIntelligence() {
         return intelligence;
     }
 
-    public void setIntelligence(float intelligence) {
+    public void setIntelligence(Double intelligence) {
         this.intelligence = intelligence;
     }
 }
